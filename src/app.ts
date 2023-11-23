@@ -9,8 +9,7 @@ app.use(cors())
 app.get('/', (req : Request, res : Response) => {
   res.send('Hello World!')
 })
-app.get('/test', (req : Request, res : Response) => {
-  res.send('test okay')
-})
+
+
 
 export default app
