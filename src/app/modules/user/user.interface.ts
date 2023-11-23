@@ -1,11 +1,18 @@
+import { Model } from "mongoose";
+
 // type  decelerating for Address
+export type TFullName = {
+  firstName: string;
+  lastName: string;
+};
+
 export type TAddress = {
   street: string;
   city: string;
   country: string;
 };
 // type  decelerating for Order
-export type TOrders = {
+export type TOrderItem = {
   productName: string;
   price: number;
   quantity: number;
@@ -15,14 +22,16 @@ export type TUser = {
   userId: number;
   username: string;
   password: string;
-  fullName: {
-    firstName: string;
-    lastName: string;
-  };
+  fullName: TFullName;
   age: number;
   email: string;
   isActive: boolean;
   hobbies: string[];
   address: TAddress;
-  orders: Array<TOrders>;
+  orders: Array<TOrderItem>;
 };
+
+// creating a method to check the user exist or not
+export interface UserModel extends Model<TUser> {
+    isUserExists(id: number) : Promise<TUser | null>
+  }
