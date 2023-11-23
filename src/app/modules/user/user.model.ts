@@ -8,13 +8,18 @@ import {
 } from './user.interface';
 
 const fullNameSchema = new Schema<TFullName>({
-  firstName: String,
-  lastName: String,
+  firstName: {
+    type: String,
+    required: [true, 'First Name is required'],
+    trim: true,
+    maxlength: [20, 'Name can not be more than 20 characters'],
+  },
+  lastName: { type: String, required: true },
 });
 const addressSchema = new Schema<TAddress>({
-  street: String,
-  city: String,
-  country: String,
+  street: { type: String, required: true },
+  city: { type: String, required: true },
+  country: { type: String, required: true },
 });
 
 // Define the Order schema
@@ -26,7 +31,7 @@ const orderSchema = new Schema<TOrderItem>({
 
 // Define the User schema
 const userSchema = new Schema<TUser>({
-  userId: Number,
+  userId: { type: Number, required: [true, 'Why no bacon?'], unique: true },
   username: String,
   password: String,
   fullName: fullNameSchema,

@@ -28,7 +28,7 @@ export type TUser = {
   isActive: boolean;
   hobbies: string[];
   address: TAddress;
-  orders: Array<TOrderItem>;
+  orders?: Array<TOrderItem>;
 };
 
 // creating a method to check the user exist or not
