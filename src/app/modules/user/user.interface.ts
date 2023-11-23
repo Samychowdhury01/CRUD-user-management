@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import { Model } from 'mongoose';
 
 // type  decelerating for Address
 export type TFullName = {
@@ -32,6 +32,6 @@ export type TUser = {
 };
 
 // creating a method to check the user exist or not
-export interface UserModel extends Model<TUser> {
-    isUserExists(id: number) : Promise<TUser | null>
-  }
+export interface IUserModel extends Model<TUser> {
+  isUserExists(id: number): Promise<TUser | null>;
+}

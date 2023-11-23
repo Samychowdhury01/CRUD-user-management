@@ -4,7 +4,7 @@ import {
   TFullName,
   TOrderItem,
   TUser,
-  UserModel,
+  IUserModel,
 } from './user.interface';
 
 const fullNameSchema = new Schema<TFullName>({
@@ -45,4 +45,4 @@ userSchema.statics.isUserExists = async function (id: number) {
 };
 
 // user Model
-export const User = model<TUser, UserModel>('User', userSchema);
+export const User = model<TUser, IUserModel>('User', userSchema);
