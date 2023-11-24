@@ -30,7 +30,7 @@ const orderSchema = new Schema<TOrderItem>({
 
 // Define the User schema
 const userSchema = new Schema<TUser>({
-  userId: { type: Number,  unique: true },
+  userId: { type: Number, unique: true },
   username: String,
   password: String,
   fullName: fullNameSchema,
@@ -40,19 +40,21 @@ const userSchema = new Schema<TUser>({
   hobbies: [String],
   address: addressSchema,
   orders: [orderSchema],
-  isDeleted: Boolean
+  isDeleted: Boolean,
 });
 
-
 // middleware for aggregation pipelines
-userSchema.pre('aggregate', function(next : NextFunction) {
-    this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
-  next()
-})
+userSchema.pre('aggregate', function (next: NextFunction) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
 
 // custom static method to check user exist or not
 userSchema.statics.isUserExists = async function (userId: number) {
-  const user = await User.findOne({ userId }, {password :0, orders : 0, isDeleted : 0});
+  const user = await User.findOne(
+    { userId, isDeleted: {$ne : true} },
+    { password: 0, orders: 0, isDeleted: 0 },
+  );
   return user;
 };
 

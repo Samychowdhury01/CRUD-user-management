@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { UserService } from './user.service';
 import validationSchema from './user.validation';
 import { z } from 'zod';
 
 // controller for create a new user
-const createUser = async (req: Request, res: Response) => {
+const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.body;
 
@@ -19,7 +19,7 @@ const createUser = async (req: Request, res: Response) => {
   } catch (error: any) {
     // Handling the Zod error with a professional error message
     if (error instanceof z.ZodError) {
-      res.status(500).json({
+      res.status(400).json({
         success: false,
         message: `${
           error?.issues[0]?.message !== 'Required'
@@ -29,11 +29,7 @@ const createUser = async (req: Request, res: Response) => {
         error: error?.issues,
       });
     } else {
-      res.status(500).json({
-        success: false,
-        message: error.message || 'Something went wrong',
-        error: error,
-      });
+      next(error)
     }
   }
 };
@@ -45,54 +41,56 @@ const getAllUsers = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: 'Users fetched successfully!',
-      data : result
+      data: result,
     });
   } catch (err: any) {
-   res.status(500).json({
-    success: false,
-    message: err.message || "Something went wrong!",
-    data : null
-   })
+    res.status(500).json({
+      success: false,
+      message: err.message || 'Something went wrong!',
+      error: err,
+    });
   }
 };
 
 // controller for retrieve single user
-const getSingleUser = async (req : Request, res : Response) =>{
-try{
+const getSingleUser = async (req: Request, res: Response, next : NextFunction) => {
+  try {
+    const { userId } = req.params;
+    const singleUser = await UserService.getSingleUserFromDB(Number(userId));
 
-  const {userId} = req.params
-  const singleUser = await UserService.getSingleUserFromDB(Number(userId))
-
-  // validating if user does exist and data is null it will show a message
-  if(singleUser){
     res.status(200).json({
       success: true,
       message: 'Users fetched successfully!',
-      data : singleUser
+      data: singleUser,
     });
+
+  } catch (error) {
+    next(error)
   }
-  else{
-    res.status(500).json({
-      success: false,
-      message: "User not Found!",
-      data : singleUser 
-     })
+};
+
+// controller for Delete user
+const removeSingleUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { userId } = req.params;
+    const deletedUser = await UserService.deleteUserFromDB(Number(userId));
+    res.status(200).json({
+      success: true,
+      message: 'User deleted successfully!',
+      data: null,
+    });
+  } catch (error) {
+   next(error)
   }
-} catch(error){
-  res.status(500).json({
-    success: false,
-    message: err.message || "Something went wrong!",
-    error : error
-   })
-}
-
- 
-
-
-}
+};
 
 export const UserController = {
   createUser,
   getAllUsers,
-  getSingleUser
+  getSingleUser,
+  removeSingleUser,
 };

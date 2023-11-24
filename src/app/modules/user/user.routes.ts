@@ -9,5 +9,7 @@ router.post('/', UserController.createUser);
 router.get('/', UserController.getAllUsers);
 // Retrieve single users from DB
 router.get('/:userId', UserController.getSingleUser);
+// Delete single users from DB
+router.delete('/:userId', UserController.removeSingleUser);
 
 export const UserRouter = router;

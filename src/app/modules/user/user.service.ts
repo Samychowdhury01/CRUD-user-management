@@ -1,4 +1,3 @@
-
 import { TUser } from './user.interface';
 import { User } from './user.model';
 
@@ -31,15 +30,29 @@ const getAllUserFromDB = async () => {
 };
 
 // Get a single user from DB
+const getSingleUserFromDB = async (userId: number) => {
+  const result = await User.isUserExists(userId);
 
-const getSingleUserFromDB = async (userId:number) => {
-  const result = await User.isUserExists(userId)
-  console.log(result);
-  return result
-}
+  if(!result){
+    throw { code: 404, description: "User not found!" };
+  }
 
+  return result;
+};
+
+// Delete user from DB
+const deleteUserFromDB = async (userId: number) => {
+  const isUserExist = await User.isUserExists(userId);
+  if (isUserExist) {
+    const result = await User.updateOne({ userId }, { isDeleted: true });
+    return result;
+  } else {
+    throw { code: 404, description: "User not found!" };;
+  }
+};
 export const UserService = {
   crateUserInDB,
   getAllUserFromDB,
   getSingleUserFromDB,
+  deleteUserFromDB,
 };

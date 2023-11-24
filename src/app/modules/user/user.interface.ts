@@ -29,7 +29,7 @@ export type TUser = {
   hobbies: string[];
   address: TAddress;
   orders?: Array<TOrderItem>;
-  isDeleted: boolean
+  isDeleted: boolean;
 };
 
 // creating a method to check the user exist or not
