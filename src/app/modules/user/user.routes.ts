@@ -9,6 +9,8 @@ router.post('/', UserController.createUser);
 router.get('/', UserController.getAllUsers);
 // Retrieve single users from DB
 router.get('/:userId', UserController.getSingleUser);
+// Update single users from DB
+router.put('/:userId', UserController.updateUser);
 // Delete single users from DB
 router.delete('/:userId', UserController.removeSingleUser);
 

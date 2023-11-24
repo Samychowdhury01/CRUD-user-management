@@ -40,6 +40,10 @@ const getSingleUserFromDB = async (userId: number) => {
   return result;
 };
 
+// Update user details
+const updateUserData = async (userId:number) => {
+  
+}
 // Delete user from DB
 const deleteUserFromDB = async (userId: number) => {
   const isUserExist = await User.isUserExists(userId);
@@ -54,5 +58,6 @@ export const UserService = {
   crateUserInDB,
   getAllUserFromDB,
   getSingleUserFromDB,
+  updateUserData,
   deleteUserFromDB,
 };

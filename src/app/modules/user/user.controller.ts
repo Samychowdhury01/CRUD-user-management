@@ -29,13 +29,13 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
         error: error?.issues,
       });
     } else {
-      next(error)
+      next(error);
     }
   }
 };
 
 // controller for get all users from DB
-const getAllUsers = async (req: Request, res: Response) => {
+const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await UserService.getAllUserFromDB();
     res.status(200).json({
@@ -44,16 +44,16 @@ const getAllUsers = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || 'Something went wrong!',
-      error: err,
-    });
+    next(err);
   }
 };
 
 // controller for retrieve single user
-const getSingleUser = async (req: Request, res: Response, next : NextFunction) => {
+const getSingleUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { userId } = req.params;
     const singleUser = await UserService.getSingleUserFromDB(Number(userId));
@@ -63,9 +63,18 @@ const getSingleUser = async (req: Request, res: Response, next : NextFunction) =
       message: 'Users fetched successfully!',
       data: singleUser,
     });
-
   } catch (error) {
-    next(error)
+    next(error);
+  }
+};
+
+const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = req.params;
+    const userUpdatedData = req.body
+    const result = await UserService.updateUserData()
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -84,7 +93,7 @@ const removeSingleUser = async (
       data: null,
     });
   } catch (error) {
-   next(error)
+    next(error);
   }
 };
 
@@ -92,5 +101,6 @@ export const UserController = {
   createUser,
   getAllUsers,
   getSingleUser,
+  updateUser,
   removeSingleUser,
 };

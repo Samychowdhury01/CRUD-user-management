@@ -32,4 +32,24 @@ const validationSchema = z.object({
   isDeleted: z.boolean().optional().default(false),
 });
 
+// validation for update user data
+
+export const updateUserSchema = z.object({
+  userId: z.number().optional(), 
+  username: z.string().optional(),
+  password: z.string().optional(),
+  fullName: fullNameSchema.optional(),
+  age: z.number().optional(),
+  email: z.string().email().optional(),
+  isActive: z.boolean().optional(),
+  hobbies: z.array(z.string()).optional(),
+  address: z.object({
+    street: z.string().optional(),
+    city: z.string().optional(),
+    country: z.string().optional(),
+  }),
+  orders: z.array(orderSchema).optional(),
+  isDeleted: z.boolean().optional(),
+});
+
 export default validationSchema;

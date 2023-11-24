@@ -18,7 +18,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Global Error Handling Middleware
-app.use((err:any, req: Request, res : Response, next: NextFunction) => {
+app.use((err:any, req: Request, res : Response) => {
   // Sending JSON response with error details
   console.log({err, j: 1});
   res.status(500).json({
