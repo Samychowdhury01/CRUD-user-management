@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from './user.service';
-import validationSchema, { updateUserSchema } from './user.validation';
+import validationSchema, { orderSchema, updateUserSchema } from './user.validation';
 
 
 // controller for create a new user
@@ -93,10 +93,29 @@ const removeSingleUser = async (
   }
 };
 
+// controller for add product in order list
+const addProduct =async (req: Request, res: Response, next: NextFunction) => {
+try{
+const {userId} = req.params
+const product = req.body
+const orderItem = orderSchema.parse(product)
+
+const result = await UserService.addProductIntoDB(Number(userId), orderItem)
+res.status(200).json({
+  success : true,
+  message : "Order created successfully!",
+  data: null
+})
+}
+catch(error){
+  next(error)
+}
+}
 export const UserController = {
   createUser,
   getAllUsers,
   getSingleUser,
   updateUser,
   removeSingleUser,
+  addProduct,
 };

@@ -7,6 +7,9 @@ import {
   IUserModel,
 } from './user.interface';
 import { NextFunction } from 'express';
+import config from '../../config';
+import bcrypt from 'bcrypt'
+
 
 const fullNameSchema = new Schema<TFullName>({
   firstName: {
@@ -43,11 +46,18 @@ const userSchema = new Schema<TUser>({
   isDeleted: Boolean,
 });
 
+// hashing passwords before save into DB
+userSchema.pre('save', async function (next: NextFunction) {
+  const user = this
+  user.password = await bcrypt.hash(user.password, Number(config.bcrypt_salt_rounds));
+  next()
+},
+
 // middleware for aggregation pipelines
 userSchema.pre('aggregate', function (next: NextFunction) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
-});
+}));
 
 // custom static method to check user exist or not
 userSchema.statics.isUserExists = async function (userId: number) {

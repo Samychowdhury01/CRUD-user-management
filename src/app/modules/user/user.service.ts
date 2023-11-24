@@ -1,4 +1,4 @@
-import { TUser } from './user.interface';
+import { TOrderItem, TUser } from './user.interface';
 import { User } from './user.model';
 
 // save a new user to DB
@@ -50,12 +50,10 @@ const updateUserData = async (userId: number, userUpdatedData) => {
       { $set: userUpdatedData },
       { new: true, projection: { password: 0, orders: 0, isDeleted: 0 } }, // Excluding password from the response
     );
-    return updatedUser
-  }
-  else{
+    return updatedUser;
+  } else {
     throw { code: 404, description: 'User not found!' };
   }
-  
 };
 // Delete user from DB
 const deleteUserFromDB = async (userId: number) => {
@@ -67,10 +65,26 @@ const deleteUserFromDB = async (userId: number) => {
     throw { code: 404, description: 'User not found!' };
   }
 };
+
+// add a product in orders list in DB
+const addProductIntoDB = async (userId: number, orderItem: TOrderItem) => {
+  const isUserExist = await User.isUserExists(userId);
+  if (isUserExist) {
+    const result = User.updateOne(
+      { userId, isDeleted: { $ne: true } },
+      { $addToSet: { orders: orderItem } },
+    );
+    return result
+  }
+  else{
+    throw { code: 404, description: 'User not found!' }
+  }
+};
 export const UserService = {
   crateUserInDB,
   getAllUserFromDB,
   getSingleUserFromDB,
   updateUserData,
   deleteUserFromDB,
+  addProductIntoDB,
 };

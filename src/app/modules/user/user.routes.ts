@@ -13,5 +13,7 @@ router.get('/:userId', UserController.getSingleUser);
 router.put('/:userId', UserController.updateUser);
 // Delete single users from DB
 router.delete('/:userId', UserController.removeSingleUser);
+// Route for add a new product in order list
+router.post('/:userId/orders', UserController.addProduct);
 
 export const UserRouter = router;
