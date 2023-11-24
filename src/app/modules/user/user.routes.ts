@@ -5,5 +5,9 @@ const router = express.Router();
 
 // route for create a new user
 router.post('/', UserController.createUser);
+// Retrieve all users from DB
+router.get('/', UserController.getAllUsers);
+// Retrieve single users from DB
+router.get('/:userId', UserController.getSingleUser);
 
 export const UserRouter = router;

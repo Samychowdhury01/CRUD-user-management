@@ -29,6 +29,7 @@ const validationSchema = z.object({
   hobbies: z.array(z.string()),
   address: addressSchema,
   orders: z.array(orderSchema).optional(),
+  isDeleted: z.boolean().optional().default(false),
 });
 
 export default validationSchema;

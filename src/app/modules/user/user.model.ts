@@ -6,20 +6,19 @@ import {
   TUser,
   IUserModel,
 } from './user.interface';
+import { NextFunction } from 'express';
 
 const fullNameSchema = new Schema<TFullName>({
   firstName: {
     type: String,
-    required: [true, 'First Name is required'],
     trim: true,
-    maxlength: [20, 'Name can not be more than 20 characters'],
   },
-  lastName: { type: String, required: true },
+  lastName: String,
 });
 const addressSchema = new Schema<TAddress>({
-  street: { type: String, required: true },
-  city: { type: String, required: true },
-  country: { type: String, required: true },
+  street: String,
+  city: String,
+  country: String,
 });
 
 // Define the Order schema
@@ -31,7 +30,7 @@ const orderSchema = new Schema<TOrderItem>({
 
 // Define the User schema
 const userSchema = new Schema<TUser>({
-  userId: { type: Number, required: [true, 'Why no bacon?'], unique: true },
+  userId: { type: Number,  unique: true },
   username: String,
   password: String,
   fullName: fullNameSchema,
@@ -41,11 +40,19 @@ const userSchema = new Schema<TUser>({
   hobbies: [String],
   address: addressSchema,
   orders: [orderSchema],
+  isDeleted: Boolean
 });
 
+
+// middleware for aggregation pipelines
+userSchema.pre('aggregate', function(next : NextFunction) {
+    this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next()
+})
+
 // custom static method to check user exist or not
-userSchema.statics.isUserExists = async function (id: number) {
-  const user = await User.findOne({ id });
+userSchema.statics.isUserExists = async function (userId: number) {
+  const user = await User.findOne({ userId }, {password :0, orders : 0, isDeleted : 0});
   return user;
 };
 
