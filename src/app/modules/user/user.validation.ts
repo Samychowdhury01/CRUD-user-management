@@ -32,8 +32,8 @@ const validationSchema = z.object({
   isDeleted: z.boolean().optional().default(false),
 });
 
-// validation for update user data
 
+// validation schema for update user data
 export const updateUserSchema = z.object({
   userId: z.number().optional(), 
   username: z.string().optional(),
@@ -43,11 +43,7 @@ export const updateUserSchema = z.object({
   email: z.string().email().optional(),
   isActive: z.boolean().optional(),
   hobbies: z.array(z.string()).optional(),
-  address: z.object({
-    street: z.string().optional(),
-    city: z.string().optional(),
-    country: z.string().optional(),
-  }),
+  address: addressSchema.optional(),
   orders: z.array(orderSchema).optional(),
   isDeleted: z.boolean().optional(),
 });

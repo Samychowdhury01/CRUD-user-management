@@ -33,17 +33,30 @@ const getAllUserFromDB = async () => {
 const getSingleUserFromDB = async (userId: number) => {
   const result = await User.isUserExists(userId);
 
-  if(!result){
-    throw { code: 404, description: "User not found!" };
+  if (!result) {
+    throw { code: 404, description: 'User not found!' };
   }
 
   return result;
 };
 
 // Update user details
-const updateUserData = async (userId:number) => {
+const updateUserData = async (userId: number, userUpdatedData) => {
+  const isUserExist = await User.isUserExists(userId);
+
+  if (isUserExist) {
+    const updatedUser = await User.findOneAndUpdate(
+      { userId, isDeleted: { $ne: true } },
+      { $set: userUpdatedData },
+      { new: true, projection: { password: 0, orders: 0, isDeleted: 0 } }, // Excluding password from the response
+    );
+    return updatedUser
+  }
+  else{
+    throw { code: 404, description: 'User not found!' };
+  }
   
-}
+};
 // Delete user from DB
 const deleteUserFromDB = async (userId: number) => {
   const isUserExist = await User.isUserExists(userId);
@@ -51,7 +64,7 @@ const deleteUserFromDB = async (userId: number) => {
     const result = await User.updateOne({ userId }, { isDeleted: true });
     return result;
   } else {
-    throw { code: 404, description: "User not found!" };;
+    throw { code: 404, description: 'User not found!' };
   }
 };
 export const UserService = {

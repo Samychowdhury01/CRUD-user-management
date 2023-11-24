@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from './user.service';
-import validationSchema from './user.validation';
-import { z } from 'zod';
+import validationSchema, { updateUserSchema } from './user.validation';
+
 
 // controller for create a new user
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -17,20 +17,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       data: result,
     });
   } catch (error: any) {
-    // Handling the Zod error with a professional error message
-    if (error instanceof z.ZodError) {
-      res.status(400).json({
-        success: false,
-        message: `${
-          error?.issues[0]?.message !== 'Required'
-            ? `${error?.issues[0]?.code} : ${error?.issues[0]?.message}`
-            : 'field is required! Please provide required data.'
-        }`,
-        error: error?.issues,
-      });
-    } else {
-      next(error);
-    }
+    next(error)
   }
 };
 
@@ -71,8 +58,17 @@ const getSingleUser = async (
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.params;
-    const userUpdatedData = req.body
-    const result = await UserService.updateUserData()
+    const userUpdatedData = req.body;
+
+    const validatedUserData = updateUserSchema.parse(userUpdatedData)
+
+    const result = await UserService.updateUserData(Number(userId), validatedUserData)
+    res.status(200).json({
+      success: true,
+      message: 'User Data Updated Successfully!',
+      data: result,
+    });
+
   } catch (error) {
     next(error);
   }
