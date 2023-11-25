@@ -127,7 +127,7 @@ const calculateTotalPriceFromDB = async (userId: number) => {
 
     const parsedTotalPrice = parseFloat(totalPrice[0]?.totalPrice.toFixed(2));
 
-    return isNaN(parsedTotalPrice) ? { totalPrice: 0 } : parsedTotalPrice;
+    return { totalPrice: isNaN(parsedTotalPrice) ? 0 : parsedTotalPrice  }  ;
   } else {
     throw { code: 404, description: 'User not found!' };
   }
