@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
 import { Schema, model } from 'mongoose';
 import {
   TAddress,
@@ -54,7 +55,7 @@ userSchema.pre('save', async function (next: NextFunction) {
 },
 
 // middleware for aggregation pipelines
-userSchema.pre('aggregate', function (next: NextFunction) {
+userSchema.pre('aggregate', async function (next: NextFunction) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 }));
@@ -63,7 +64,7 @@ userSchema.pre('aggregate', function (next: NextFunction) {
 userSchema.statics.isUserExists = async function (userId: number) {
   const user = await User.findOne(
     { userId, isDeleted: {$ne : true} },
-    { password: 0, orders: 0, isDeleted: 0 },
+    { password: 0, isDeleted: 0, orders : 0 },
   );
   return user;
 };

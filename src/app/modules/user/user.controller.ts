@@ -1,7 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from './user.service';
-import validationSchema, { orderSchema, updateUserSchema } from './user.validation';
-
+import validationSchema, {
+  orderSchema,
+  updateUserSchema,
+} from './user.validation';
 
 // controller for create a new user
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -17,7 +22,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       data: result,
     });
   } catch (error: any) {
-    next(error)
+    next(error);
   }
 };
 
@@ -44,7 +49,6 @@ const getSingleUser = async (
   try {
     const { userId } = req.params;
     const singleUser = await UserService.getSingleUserFromDB(Number(userId));
-
     res.status(200).json({
       success: true,
       message: 'Users fetched successfully!',
@@ -60,15 +64,17 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
     const userUpdatedData = req.body;
 
-    const validatedUserData = updateUserSchema.parse(userUpdatedData)
+    const validatedUserData = updateUserSchema.parse(userUpdatedData);
 
-    const result = await UserService.updateUserData(Number(userId), validatedUserData)
+    const result = await UserService.updateUserData(
+      Number(userId),
+      validatedUserData,
+    );
     res.status(200).json({
       success: true,
       message: 'User Data Updated Successfully!',
       data: result,
     });
-
   } catch (error) {
     next(error);
   }
@@ -94,39 +100,63 @@ const removeSingleUser = async (
 };
 
 // controller for add product in order list
-const addProduct =async (req: Request, res: Response, next: NextFunction) => {
-try{
-const {userId} = req.params
-const product = req.body
-const orderItem = orderSchema.parse(product)
+const addProduct = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = req.params;
+    const product = req.body;
+    const orderItem = orderSchema.parse(product);
 
-const result = await UserService.addProductIntoDB(Number(userId), orderItem)
-res.status(200).json({
-  success : true,
-  message : "Order created successfully!",
-  data: null
-})
-}
-catch(error){
-  next(error)
-}
-}
+    const result = await UserService.addProductIntoDB(
+      Number(userId),
+      orderItem,
+    );
+    res.status(200).json({
+      success: true,
+      message: 'Order created successfully!',
+      data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // orders item get from DB
-const getOrderItems = async (req: Request, res: Response, next: NextFunction) => {
+const getOrderItems = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { userId } = req.params;
     const orderItems = await UserService.getOrderItemsFromDB(Number(userId));
     res.status(200).json({
-      success : true,
-      message : "Successfully Retrieve All Order Items.",
-      data : orderItems
-    })
+      success: true,
+      message: 'Successfully Retrieve All Order Items.',
+      data: orderItems,
+    });
+  } catch (error) {
+    next(error);
   }
-  catch(error){
-    next(error)
+};
+const calculateTotalPrice = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { userId } = req.params;
+    const totalPrice = await UserService.calculateTotalPriceFromDB(
+      Number(userId),
+    );
+    res.status(200).json({
+      success: true,
+      message: 'Total price calculated successfully!',
+      data: totalPrice,
+    });
+  } catch (error) {
+    next(error);
   }
-}
+};
 export const UserController = {
   createUser,
   getAllUsers,
@@ -134,5 +164,6 @@ export const UserController = {
   updateUser,
   removeSingleUser,
   addProduct,
-  getOrderItems
+  getOrderItems,
+  calculateTotalPrice,
 };

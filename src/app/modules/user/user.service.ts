@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TOrderItem, TUser } from './user.interface';
 import { User } from './user.model';
 
@@ -32,16 +35,14 @@ const getAllUserFromDB = async () => {
 // Get a single user from DB
 const getSingleUserFromDB = async (userId: number) => {
   const result = await User.isUserExists(userId);
-
   if (!result) {
     throw { code: 404, description: 'User not found!' };
   }
-
   return result;
 };
 
 // Update user details
-const updateUserData = async (userId: number, userUpdatedData) => {
+const updateUserData = async (userId: number, userUpdatedData: any) => {
   const isUserExist = await User.isUserExists(userId);
 
   if (isUserExist) {
@@ -91,7 +92,7 @@ const getOrderItemsFromDB = async (userId: number) => {
       {
         $project: {
           orders: 1,
-          _id : 0
+          _id: 0,
         },
       },
     ]);
@@ -100,6 +101,41 @@ const getOrderItemsFromDB = async (userId: number) => {
     throw { code: 404, description: 'User not found!' };
   }
 };
+
+// calculate total price of order items
+const calculateTotalPriceFromDB = async (userId: number) => {
+  const isUserExist = await User.isUserExists(userId);
+
+  if (isUserExist) {
+    
+      const totalPrice = await User.aggregate([
+        {
+          $match: { userId },
+        },
+        {
+          $unwind: '$orders',
+        },
+        {
+          $group: { _id: null, totalPrice: { $sum: '$orders.price' } },
+        },
+        {
+          $project: {
+            totalPrice: 1,
+            _id: 0,
+          },
+        },
+      ]);
+
+      const parsedTotalPrice = parseFloat(totalPrice[0]?.totalPrice.toFixed(2))
+      
+      return isNaN(parsedTotalPrice) ? {totalPrice : 0} : parsedTotalPrice;
+    
+    
+  } else {
+    throw { code: 404, description: 'User not found!' };
+  }
+};
+
 export const UserService = {
   crateUserInDB,
   getAllUserFromDB,
@@ -107,5 +143,6 @@ export const UserService = {
   updateUserData,
   deleteUserFromDB,
   addProductIntoDB,
- getOrderItemsFromDB,
+  getOrderItemsFromDB,
+  calculateTotalPriceFromDB,
 };

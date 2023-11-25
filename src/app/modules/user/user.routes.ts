@@ -18,6 +18,6 @@ router.post('/:userId/orders', UserController.addProduct);
 // Route for add a retrieve all item from order list
 router.get('/:userId/orders', UserController.getOrderItems);
 // Route for get the total price
-router.get('/:userId/orders/total', UserController.addProduct);
+router.get('/:userId/orders/total', UserController.calculateTotalPrice);
 
 export const UserRouter = router;
