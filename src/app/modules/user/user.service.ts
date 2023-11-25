@@ -107,30 +107,27 @@ const calculateTotalPriceFromDB = async (userId: number) => {
   const isUserExist = await User.isUserExists(userId);
 
   if (isUserExist) {
-    
-      const totalPrice = await User.aggregate([
-        {
-          $match: { userId },
+    const totalPrice = await User.aggregate([
+      {
+        $match: { userId },
+      },
+      {
+        $unwind: '$orders',
+      },
+      {
+        $group: { _id: null, totalPrice: { $sum: '$orders.price' } },
+      },
+      {
+        $project: {
+          totalPrice: 1,
+          _id: 0,
         },
-        {
-          $unwind: '$orders',
-        },
-        {
-          $group: { _id: null, totalPrice: { $sum: '$orders.price' } },
-        },
-        {
-          $project: {
-            totalPrice: 1,
-            _id: 0,
-          },
-        },
-      ]);
+      },
+    ]);
 
-      const parsedTotalPrice = parseFloat(totalPrice[0]?.totalPrice.toFixed(2))
-      
-      return isNaN(parsedTotalPrice) ? {totalPrice : 0} : parsedTotalPrice;
-    
-    
+    const parsedTotalPrice = parseFloat(totalPrice[0]?.totalPrice.toFixed(2));
+
+    return isNaN(parsedTotalPrice) ? { totalPrice: 0 } : parsedTotalPrice;
   } else {
     throw { code: 404, description: 'User not found!' };
   }

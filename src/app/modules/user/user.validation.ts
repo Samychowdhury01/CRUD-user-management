@@ -32,10 +32,9 @@ const validationSchema = z.object({
   isDeleted: z.boolean().optional().default(false),
 });
 
-
 // validation schema for update user data
 export const updateUserSchema = z.object({
-  userId: z.number().optional(), 
+  userId: z.number().optional(),
   username: z.string().optional(),
   password: z.string().optional(),
   fullName: fullNameSchema.optional(),

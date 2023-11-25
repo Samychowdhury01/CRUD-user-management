@@ -7,30 +7,37 @@ import {
   TUser,
   IUserModel,
 } from './user.interface';
-import { NextFunction } from 'express';
 import config from '../../config';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 
-
-const fullNameSchema = new Schema<TFullName>({
-  firstName: {
-    type: String,
-    trim: true,
+const fullNameSchema = new Schema<TFullName>(
+  {
+    firstName: {
+      type: String,
+      trim: true,
+    },
+    lastName: String,
   },
-  lastName: String,
-},  { _id: false });
-const addressSchema = new Schema<TAddress>({
-  street: String,
-  city: String,
-  country: String,
-},  { _id: false });
+  { _id: false },
+);
+const addressSchema = new Schema<TAddress>(
+  {
+    street: String,
+    city: String,
+    country: String,
+  },
+  { _id: false },
+);
 
 // Define the Order schema
-const orderSchema = new Schema<TOrderItem>({
-  productName: String,
-  price: Number,
-  quantity: Number,
-},  { _id: false });
+const orderSchema = new Schema<TOrderItem>(
+  {
+    productName: String,
+    price: Number,
+    quantity: Number,
+  },
+  { _id: false },
+);
 
 // Define the User schema
 const userSchema = new Schema<TUser>({
@@ -48,23 +55,27 @@ const userSchema = new Schema<TUser>({
 });
 
 // hashing passwords before save into DB
-userSchema.pre('save', async function (next: NextFunction) {
-  const user = this
-  user.password = await bcrypt.hash(user.password, Number(config.bcrypt_salt_rounds));
-  next()
-},
+
+userSchema.pre('save', async function (next) {
+  const user = this;
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
 
 // middleware for aggregation pipelines
-userSchema.pre('aggregate', async function (next: NextFunction) {
+userSchema.pre('aggregate', async function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
-}));
+});
 
 // custom static method to check user exist or not
 userSchema.statics.isUserExists = async function (userId: number) {
   const user = await User.findOne(
-    { userId, isDeleted: {$ne : true} },
-    { password: 0, isDeleted: 0, orders : 0 },
+    { userId, isDeleted: { $ne: true } },
+    { password: 0, isDeleted: 0, orders: 0 },
   );
   return user;
 };
