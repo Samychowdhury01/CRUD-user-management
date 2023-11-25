@@ -74,10 +74,30 @@ const addProductIntoDB = async (userId: number, orderItem: TOrderItem) => {
       { userId, isDeleted: { $ne: true } },
       { $addToSet: { orders: orderItem } },
     );
-    return result
+    return result;
+  } else {
+    throw { code: 404, description: 'User not found!' };
   }
-  else{
-    throw { code: 404, description: 'User not found!' }
+};
+
+// get the orders item
+const getOrderItemsFromDB = async (userId: number) => {
+  const isUserExist = await User.isUserExists(userId);
+  if (isUserExist) {
+    const result = await User.aggregate([
+      {
+        $match: { userId },
+      },
+      {
+        $project: {
+          orders: 1,
+          _id : 0
+        },
+      },
+    ]);
+    return result;
+  } else {
+    throw { code: 404, description: 'User not found!' };
   }
 };
 export const UserService = {
@@ -87,4 +107,5 @@ export const UserService = {
   updateUserData,
   deleteUserFromDB,
   addProductIntoDB,
+ getOrderItemsFromDB,
 };

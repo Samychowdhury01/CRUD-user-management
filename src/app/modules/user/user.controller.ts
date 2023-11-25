@@ -111,6 +111,22 @@ catch(error){
   next(error)
 }
 }
+
+// orders item get from DB
+const getOrderItems = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = req.params;
+    const orderItems = await UserService.getOrderItemsFromDB(Number(userId));
+    res.status(200).json({
+      success : true,
+      message : "Successfully Retrieve All Order Items.",
+      data : orderItems
+    })
+  }
+  catch(error){
+    next(error)
+  }
+}
 export const UserController = {
   createUser,
   getAllUsers,
@@ -118,4 +134,5 @@ export const UserController = {
   updateUser,
   removeSingleUser,
   addProduct,
+  getOrderItems
 };

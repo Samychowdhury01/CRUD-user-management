@@ -17,19 +17,19 @@ const fullNameSchema = new Schema<TFullName>({
     trim: true,
   },
   lastName: String,
-});
+},  { _id: false });
 const addressSchema = new Schema<TAddress>({
   street: String,
   city: String,
   country: String,
-});
+},  { _id: false });
 
 // Define the Order schema
 const orderSchema = new Schema<TOrderItem>({
   productName: String,
   price: Number,
   quantity: Number,
-});
+},  { _id: false });
 
 // Define the User schema
 const userSchema = new Schema<TUser>({

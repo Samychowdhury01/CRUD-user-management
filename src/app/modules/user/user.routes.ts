@@ -15,5 +15,9 @@ router.put('/:userId', UserController.updateUser);
 router.delete('/:userId', UserController.removeSingleUser);
 // Route for add a new product in order list
 router.post('/:userId/orders', UserController.addProduct);
+// Route for add a retrieve all item from order list
+router.get('/:userId/orders', UserController.getOrderItems);
+// Route for get the total price
+router.get('/:userId/orders/total', UserController.addProduct);
 
 export const UserRouter = router;
